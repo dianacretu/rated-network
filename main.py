@@ -26,7 +26,7 @@ with open(file, 'r') as csvf:
 # date in string format
 latest_block_timestamp = "26.07.2022 12:32:54 AM UTC"
 latest_block_number = 15218113
-transaction_hash = "0x0ba5abf4ef9eedb75a7fd5e645034288e02c6c4fafebf932e191b4df1f8ffac8"
-print(transaction_timestamp.find_transaction_timestamp(transaction_hash, data, latest_block_timestamp, latest_block_number))
-print(transaction_timestamp.find_transaction_timestamp_knowing_average_block_length(transaction_hash, data))
 
+# Calculate the timestamp for each transaction
+for key in data:
+    print(transaction_timestamp.find_transaction_timestamp(key, data, latest_block_timestamp, latest_block_number))
