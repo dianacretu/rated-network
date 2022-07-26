@@ -5,6 +5,7 @@ from transaction import transaction
 import transaction_timestamp
 import sys
 import transaction_gas_cost
+import transaction_gas_dollar_cost
 
 args = sys.argv[1:]
 
@@ -35,3 +36,8 @@ for key in data:
 # calculate the gas cost in gwei for each transaction
 for key in data:
     print(transaction_gas_cost.find_transaction_gas_cost(key, data))
+
+coin_info = transaction_gas_dollar_cost.take_coin_info_from_list("Ethereum")
+# calculate the gas cost in dollars
+for key in data:
+    print(transaction_gas_dollar_cost.find_dollar_cost_of_gas_used(key, data, latest_block_timestamp, latest_block_number, coin_info["id"]))
