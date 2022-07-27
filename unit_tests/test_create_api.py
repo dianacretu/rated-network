@@ -1,22 +1,24 @@
 from unittest import mock
 import pytest
 from http import HTTPStatus
-from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient as Client
 from create_database import create_connection, insert_object_to_table, create_table
 from create_api import app, file_path, Item
 import create_api
 import random
 import string
 import json
+import os
 
 # test to check if get request returns the exepcted response
 def test_get_item_returns_expected_reposnse_code_and_object():
-    client = TestClient(app)
+     # Prevent pytest from trying to collect webtest's TestApp as tests:
+    Client.__test__ = False
+    client = Client(app)
 
-    # Prevent pytest from trying to collect webtest's TestApp as tests:
-    TestClient.__test__ = False
-
-    create_api.file_path = r"/home/siltros/RatedLabs/rated-network/test_db.db"
+    dirname = os.path.dirname(__file__)
+    filename = os.path.join(dirname, "test_db.db")
+    create_api.file_path = filename
     conn = create_connection(create_api.file_path)
 
     create_table(conn)
@@ -32,12 +34,14 @@ def test_get_item_returns_expected_reposnse_code_and_object():
 
 # test to check if get requests returns 404 when hash not present in the table
 def test_get_item_returns_404_when_hash_not_present():
-    client = TestClient(app)
+     # Prevent pytest from trying to collect webtest's TestApp as tests:
+    Client.__test__ = False
 
-    # Prevent pytest from trying to collect webtest's TestApp as tests:
-    TestClient.__test__ = False
+    client = Client(app)
 
-    create_api.file_path = r"/home/siltros/RatedLabs/rated-network/test_db.db"
+    dirname = os.path.dirname(__file__)
+    filename = os.path.join(dirname, "test_db.db")
+    create_api.file_path = filename
     conn = create_connection(create_api.file_path)
 
     create_table(conn)
