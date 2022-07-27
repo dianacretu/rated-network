@@ -1,10 +1,11 @@
-from numpy import block
 from create_database import create_connection, create_table
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import os
 
 app = FastAPI()
-file_path = r"/home/siltros/RatedLabs/rated-network/pythonsqlite.db"
+dirname = os.path.dirname(__file__)
+file_path = os.path.join(dirname, "pythonsqlite.db")
 
 class Item(BaseModel):
     hash: str
@@ -28,7 +29,7 @@ def read_item(transaction_hash: str):
     tables = cur.execute(sql_create_table, object)
 
     records = cur.fetchall()
-    
+
     if not len(records) == 1:
         raise HTTPException(status_code=404, detail="Transaction hash " + transaction_hash + " does not exist in the database.")
 

@@ -2,17 +2,24 @@ import pytest
 import os.path
 from create_database import create_connection, create_table, insert_data_to_table
 from transaction import transaction
+import random
+import string
 
 # test to check if the database is created
 def test_create_database_creates_database_file():
-    file_path = r"/home/siltros/RatedLabs/rated-network/test_db.db"
+    dirname = os.path.dirname(__file__)
+    file_path = os.path.join(dirname, "test_db.db")
+
     create_connection(file_path)
 
     assert os.path.exists(file_path)
 
 # test to check if the table is created
 def test_create_table_function_creates_a_table():
-    file_path = r"/home/siltros/RatedLabs/rated-network/test_db.db"
+    dirname = os.path.dirname(__file__)
+    filename = os.path.join(dirname, "test_db.db")
+    file_path = filename
+    #file_path = r"~/RatedLabs/rated-network/unit_tests/test_db.db"
     conn = create_connection(file_path)
 
     create_table(conn)
@@ -22,13 +29,14 @@ def test_create_table_function_creates_a_table():
     cur = conn.cursor()
     tables = cur.execute(sql_create_table)
 
-    assert tables.arraysize > 0
+    assert len(tables.fetchall())> 0
 
 # test to check if we insert the data in the table
 def test_insert_data_to_table_wroks_as_expected():
+    random_hash = ''.join(random.choice(string.ascii_letters) for i in range(20))
     # we create a mock dictionary
-    data_test = {'0x111': transaction(
-        hash='0x111', 
+    data_test = {random_hash: transaction(
+        hash= random_hash, 
         nonce=3, 
         transaction_index='117', 
         from_address='0x75', 
@@ -49,7 +57,10 @@ def test_insert_data_to_table_wroks_as_expected():
         transaction_type='2', 
         receipt_effective_gas_price='32035059237')}
 
-    file_path = r"/home/siltros/RatedLabs/rated-network/test_db.db"
+    dirname = os.path.dirname(__file__)
+    filename = os.path.join(dirname, "test_db.db")
+    file_path = filename
+
     conn = create_connection(file_path)
 
     create_table(conn)
@@ -61,5 +72,5 @@ def test_insert_data_to_table_wroks_as_expected():
     cur = conn.cursor()
     tables = cur.execute(sql_create_table)
 
-    assert tables.arraysize > 0
+    assert len(tables.fetchall()) > 0
 
