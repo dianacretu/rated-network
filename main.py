@@ -6,6 +6,8 @@ import transaction_timestamp
 import sys
 import transaction_gas_cost
 import transaction_gas_dollar_cost
+from create_database import create_connection, create_table, insert_data_to_table
+import time
 
 args = sys.argv[1:]
 
@@ -29,15 +31,19 @@ with open(file, 'r') as csvf:
 latest_block_timestamp = "26.07.2022 12:32:54 AM UTC"
 latest_block_number = 15218113
 
-# calculate the timestamp for each transaction
-for key in data:
-    print(transaction_timestamp.find_transaction_timestamp(key, data, latest_block_timestamp, latest_block_number))
-
-# calculate the gas cost in gwei for each transaction
-for key in data:
-    print(transaction_gas_cost.find_transaction_gas_cost(key, data))
-
 coin_info = transaction_gas_dollar_cost.take_coin_info_from_list("Ethereum")
-# calculate the gas cost in dollars
-for key in data:
-    print(transaction_gas_dollar_cost.find_dollar_cost_of_gas_used(key, data, latest_block_timestamp, latest_block_number, coin_info["id"]))
+
+
+database = r"/home/siltros/RatedLabs/rated-network/pythonsqlite.db"
+
+# create a database connection
+conn = create_connection(database)
+
+# create table
+if conn is not None:
+    # create projects table
+    create_table(conn)
+else:
+    print("Error! cannot create the database connection.")
+
+insert_data_to_table(data, conn, latest_block_timestamp, latest_block_number, coin_info["id"])
